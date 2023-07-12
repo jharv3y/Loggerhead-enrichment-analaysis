@@ -1,9 +1,7 @@
 rm(list=ls())
 library(tidyverse)
-#install.packages("rstatix")
 library(rstatix)
 library(nlme)
-#install.packages("lmerTest")
 library(lmerTest)
 library(lme4)
 library(ggplot2)
@@ -47,6 +45,9 @@ cleanup=theme(panel.grid.major = element_blank(),
               panel.background=element_blank(),
               axis.line=element_line(color = "black"))
 
+#data in long format for lm
+data_long <- gather(data, obj, measurement, acc_bs:totrest_noacc, factor_key=TRUE)
+data_long
 
 enrich<-data_long %>% filter(obj == 'tot_bs'| obj == 'pipe'| obj == 'b_stat'| obj == 'b_other'| obj == 'shelt_hid'| obj == 'shelt_other'| obj == 'shelt_stat'| obj == 'other')
 
@@ -66,15 +67,20 @@ enrich$obj <- factor(enrich$obj, levels=c('Other', 'Resting under pipe','Under s
 
 levels(enrich$obj)
 
+
+windowsFonts(Times=windowsFont("Times New Roman"))
+
 ggplot(enrich, aes(fill=obj, y=measurement, x=turtle)) + 
   geom_bar(position="stack", stat="identity")+
   cleanup+
   coord_flip()+
-  scale_fill_manual(name="Behaviour", values=c("deepskyblue","deepskyblue3","darkblue", "plum1","orchid2",
-                                               "orchid4","coral2","grey"), breaks=c('Brush other', 'Resting under brush', 'Scratching with brush', 'Resting at shelter', 'Shelter other','Under shelter', 'Resting under pipe','Other'))+
+  scale_fill_manual(name="Behaviour", values=c("gold","darkorange","firebrick1", "seagreen1","lightseagreen",
+                                               "slateblue4","hotpink2","grey"), breaks=c('Brush other', 'Resting under brush', 'Scratching with brush', 'Resting at shelter', 'Shelter other','Under shelter', 'Resting under pipe','Other'))+
   scale_x_discrete(labels=c("3" = "1", "4" = "2",
                             "5" = "3", "6"="4", "7"="5", "8"="6"), name= "Turtle")+
-  scale_y_continuous(name = "Behavioural allocations (%)", breaks=seq(0,100,10)) #, 
+  scale_y_continuous(name = "Behavioural allocations (%)", breaks=seq(0,100,10))+
+  theme(text=element_text(family="Times", size=12)) 
+
 
 ##graph for exposed vs assisted resting
 
